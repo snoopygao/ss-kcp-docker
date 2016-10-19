@@ -23,8 +23,8 @@ RUN mkdir -p /opt/kcptun && cd /opt/kcptun && tar xvfz /root/kcptun-linux-amd64.
 RUN rm -rf /root/shadowsocks-libev
 COPY supervisord.conf /etc/supervisord.conf
 
-ENV SS_PASSWORD=1234567 SS_METHOD=aes-256-cfb KCP_KEY=1234567 \
-	MTU=1350 SNDWND=128 RCVWND=1024 MODE=fast
+ENV SS_PASSWORD=1234567 SS_METHOD=aes-256-cfb \
+	KCP_MTU=1350 KCP_NODE=fast KCP_KEY=123456789
 
 EXPOSE 41111/udp 8338/tcp
 
