@@ -14,8 +14,8 @@ RUN set -ex \
 	&& wget -O /root/kcptun-linux-amd64.tar.gz https://github.com/xtaci/kcptun/releases/download/v20161009/kcptun-linux-amd64-20161009.tar.gz \
 	&& mkdir -p /opt/kcptun \
 	&& cd /opt/kcptun \
-	&& tar xvfz /root/kcptun-linux-amd64.tar.gz
-   	&& apk del --virtual TMP
+	&& tar xvfz /root/kcptun-linux-amd64.tar.gz \
+   	&& apk del --virtual TMP \
 	&& apk add supervisor
 COPY supervisord.conf /etc/supervisord.conf
 ENV PASSWORD=1234567 METHOD=aes-256-cfb \
