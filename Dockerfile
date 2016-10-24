@@ -18,8 +18,7 @@ RUN set -ex \
    	&& apk del --virtual TMP \
 	&& apk add supervisor
 COPY supervisord.conf /etc/supervisord.conf
-ENV PASSWORD=1234567 METHOD=aes-256-cfb \
-	KCP_MTU=1350 KCP_MODE=fast KCP_KEY=123456789
+ENV KCP_MTU=1350 KCP_MODE=fast KCP_KEY=123456789
 EXPOSE 41111/udp 8338/tcp
 
 CMD ["/usr/bin/supervisord"]
