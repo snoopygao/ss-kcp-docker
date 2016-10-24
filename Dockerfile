@@ -4,7 +4,7 @@
 # Command format: Instruction [arguments / command] ..
 
 # Base image to use, this must be set as the first line
-FROM vimagick/shadowsocks-libev:latest
+FROM easypi/shadowsocks-libev
 
 # Install shadowsocks-libev
 RUN apt-get install wget supervisor -y
