@@ -16,7 +16,7 @@ RUN set -ex \
 	&& mkdir -p /opt/kcptun \
 	&& cd /opt/kcptun \
 	&& tar xvfz /root/kcptun-linux-amd64.tar.gz \
-   	&& apk del --virtual TMP \
+   	&& apk del --virtual TMP \ 
 	&& pip install supervisor-stdout
 COPY supervisord.conf /etc/supervisord.conf
 ENV KCP_MTU=1350 KCP_MODE=fast KCP_KEY=123456789
