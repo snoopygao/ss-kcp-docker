@@ -21,5 +21,5 @@ COPY supervisord.conf /etc/supervisord.conf
 ENV KCP_MTU=1350 KCP_MODE=fast KCP_KEY=123456789
 EXPOSE 41111/udp 8338/tcp
 
-CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord"， "-c", "/etc/supervisord.conf"]
 
