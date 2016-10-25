@@ -16,7 +16,7 @@ RUN set -ex \
 	&& cd /opt/kcptun \
 	&& tar xvfz /root/kcptun-linux-amd64.tar.gz \
    	&& apk del --virtual TMP \
-	&& apk add supervisor
+	&& apk add supervisor supervisor-stdout
 COPY supervisord.conf /etc/supervisord.conf
 ENV KCP_MTU=1350 KCP_MODE=fast KCP_KEY=123456789
 EXPOSE 41111/udp 8338/tcp
