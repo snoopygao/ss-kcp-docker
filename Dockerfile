@@ -1,9 +1,3 @@
-# This dockerfile uses the ubuntu image
-# VERSION 1 - EDITION 1
-# Author: Yale Huang
-# Command format: Instruction [arguments / command] ..
-
-# Base image to use, this must be set as the first line
 FROM easypi/shadowsocks-libev
 RUN set -ex \
 	&& apk update \
