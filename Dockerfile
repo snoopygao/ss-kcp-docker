@@ -10,6 +10,7 @@ RUN set -ex \
 	&& mkdir -p /opt/kcptun \
 	&& cd /opt/kcptun \
 	&& tar xvfz /root/kcptun-linux-amd64.tar.gz \
+	&& rm /root/kcptun-linux-amd64.tar.gz \
    	&& apk del --virtual TMP \ 
 	&& pip install supervisor-stdout
 COPY supervisord.conf /etc/supervisord.conf
