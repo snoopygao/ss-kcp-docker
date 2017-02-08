@@ -1,4 +1,4 @@
-FROM easypi/shadowsocks-libev
+FROM gists/shadowsocks-libev
 RUN set -ex \
 	&& apk update \
 	&& apk add ca-certificates supervisor \
