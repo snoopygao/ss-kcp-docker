@@ -77,7 +77,7 @@ USER nobody
 EXPOSE $KCP_LISTEN/udp
 
 CMD /usr/bin/ss-server -s $SERVER_ADDR \
-              -l $SERVER_PORT \
+              -p $SERVER_PORT \
               -k $PASSWORD \
               -m $METHOD \
               -t $TIMEOUT \
