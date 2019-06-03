@@ -17,7 +17,6 @@ RUN set -ex \
 RUN set -ex \
     && apt-get update \
     && apt-get install -y --no-install-recommends python-setuptools python-pip \
-    && pip install --upgrade pip \
     && pip install shadowsocks \
     && apt-get purge -y --auto-remove python-setuptools python-pip \
     && rm -rf /var/log/dpkg.log /var/lib/apt/lists/* /var/log/apt/*
