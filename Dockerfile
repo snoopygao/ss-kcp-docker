@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM ubuntu:latest
 LABEL maintainer "gaoxing <gaoxing2000@gmail.com>"
 
 # Python
