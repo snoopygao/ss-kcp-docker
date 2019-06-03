@@ -77,12 +77,13 @@ USER nobody
 EXPOSE $KCP_LISTEN/udp
 
 CMD /usr/bin/ss-server -s $SERVER_ADDR \
-              -p $SERVER_PORT \
+              -l $SERVER_PORT \
               -k $PASSWORD \
               -m $METHOD \
               -t $TIMEOUT \
               -d $DNS_ADDR \
               -d $DNS_ADDR_2 \
+              $FASTOPEN \
               $ARGS \
               -f /tmp/ss.pid \
               && /usr/bin/server_linux_amd64 -t "127.0.0.1:$SERVER_PORT" \
