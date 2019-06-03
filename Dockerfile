@@ -74,7 +74,6 @@ KCP_ARGS=''
 
 USER nobody
 
-EXPOSE $SERVER_PORT/tcp $SERVER_PORT/udp
 EXPOSE $KCP_LISTEN/udp
 
 CMD /usr/bin/ss-server -s $SERVER_ADDR \
@@ -82,15 +81,12 @@ CMD /usr/bin/ss-server -s $SERVER_ADDR \
               -k $PASSWORD \
               -m $METHOD \
               -t $TIMEOUT \
-              $FASTOPEN \
               -d $DNS_ADDR \
               -d $DNS_ADDR_2 \
-              $UDP_RELAY \
               $ARGS \
               -f /tmp/ss.pid \
               && /usr/bin/server_linux_amd64 -t "127.0.0.1:$SERVER_PORT" \
               -l ":$KCP_LISTEN" \
               --mode $KCP_MODE \
-              --mtu $KCP_MUT \
               $KCP_NOCOMP \
               $KCP_ARGS
