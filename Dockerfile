@@ -1,38 +1,99 @@
-FROM ubuntu:latest
-LABEL maintainer "gaoxing <gaoxing2000@gmail.com>"
+FROM alpine:3.9
 
-# Python
-RUN set -ex \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends python \
-    && rm -rf /var/log/dpkg.log /var/lib/apt/lists/* /var/log/apt/*
+LABEL maintainer="gaoxing2000@gmail.com"
 
-# Supervisord
-RUN set -ex \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends supervisor \
-    && rm -rf /var/log/dpkg.log /var/lib/apt/lists/* /var/log/apt/*
+RUN set -ex && \
+    apk add --no-cache --virtual .build-deps \
+                                autoconf \
+                                build-base \
+                                curl \
+                                libev-dev \
+                                linux-headers \
+                                libsodium-dev \
+                                mbedtls-dev \
+                                pcre-dev \
+                                tar \
+                                tzdata \
+                                c-ares-dev \
+                                git \
+                                gcc \
+                                make \
+                                libtool \
+                                zlib-dev \
+                                automake \
+                                openssl \
+                                asciidoc \
+                                xmlto \
+                                libpcre32 \
+                                g++ && \
+    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    cd /tmp && \
+    v=`curl -I -s https://github.com/xtaci/kcptun/releases/latest | grep Location | sed -n 's/.*\/v\(.*\)/\1/p' | tr -d '\r'` && \
+    curl -sSL https://github.com/xtaci/kcptun/releases/download/v$v/kcptun-linux-amd64-$v.tar.gz | tar xz server_linux_amd64 && \
+    mv server_linux_amd64 /usr/bin/ && \
+    mkdir ss && \
+    cd ss && \
+    v=`curl -I -s https://github.com/shadowsocks/shadowsocks-libev/releases/latest | grep Location | sed -n 's/.*\/v\(.*\)/\1/p' | tr -d '\r'` && \
+    curl -sSL https://github.com/shadowsocks/shadowsocks-libev/releases/download/v$v/shadowsocks-libev-$v.tar.gz | tar xz --strip 1 && \
+    ./configure --prefix=/usr --disable-documentation && \
+    make install && \
+    cd /tmp && \
+    git clone https://github.com/shadowsocks/simple-obfs.git && \
+    cd simple-obfs && \
+    git submodule update --init --recursive && \
+    ./autogen.sh && \
+    ./configure && \
+    make && \
+    make install && \
+    cd .. && \
+    runDeps="$( \
+        scanelf --needed --nobanner /usr/bin/ss-* \
+            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+            | xargs -r apk info --installed \
+            | sort -u \
+    )" && \
+    apk add --no-cache --virtual .run-deps $runDeps && \
+    apk del .build-deps && \
+    rm -rf /tmp/*
 
-# Python and Shadowsocks
-RUN set -ex \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends python-setuptools python-pip \
-    && pip install shadowsocks \
-    && apt-get purge -y --auto-remove python-setuptools python-pip \
-    && rm -rf /var/log/dpkg.log /var/lib/apt/lists/* /var/log/apt/*
+ENV SERVER_ADDR=0.0.0.0 \
+SERVER_PORT=37210 \
+PASSWORD=passw0rd \
+METHOD=aes-256-cfb \
+TIMEOUT=300 \
+FASTOPEN=--fast-open \
+UDP_RELAY=-u \
+DNS_ADDR=8.8.8.8 \
+DNS_ADDR_2=8.8.4.4 \
+ARGS='' \
+KCP_LISTEN=29900 \
+KCP_PASS=phpgao \
+KCP_ENCRYPT=aes-192 \
+KCP_MODE=fast \
+KCP_MUT=1350 \
+KCP_NOCOMP='' \
+KCP_ARGS=''
 
-# kcptun
-ARG kcptun_targz_url="https://github.com/xtaci/kcptun/releases/download/v20190515/kcptun-linux-amd64-20190515.tar.gz"
-RUN set -ex \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends wget \
-    && wget --no-check-certificate "${kcptun_targz_url}" -O /tmp/kcptun.tar.gz \
-    && mkdir -p /usr/local/kcptun && tar -zxf /tmp/kcptun.tar.gz -C /usr/local/kcptun \
-    && rm -f /tmp/kcptun.tar.gz \
-    && apt-get purge -y --auto-remove wget \
-    && rm -rf /var/log/dpkg.log /var/lib/apt/lists/* /var/log/apt/*
+USER nobody
 
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-COPY shadowsocks-kcptun.supervisor.conf /etc/supervisor/conf.d/shadowsocks-kcptun.conf
+EXPOSE $SERVER_PORT/tcp $SERVER_PORT/udp
+EXPOSE $KCP_LISTEN/udp
 
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
+CMD /usr/bin/ss-server -s $SERVER_ADDR \
+              -p $SERVER_PORT \
+              -k $PASSWORD \
+              -m $METHOD \
+              -t $TIMEOUT \
+              $FASTOPEN \
+              -d $DNS_ADDR \
+              -d $DNS_ADDR_2 \
+              $UDP_RELAY \
+              $ARGS \
+              -f /tmp/ss.pid \
+              && /usr/bin/server_linux_amd64 -t "127.0.0.1:$SERVER_PORT" \
+              -l ":$KCP_LISTEN" \
+              -key $KCP_PASS \
+              --mode $KCP_MODE \
+              --mtu $KCP_MUT \
+              $KCP_NOCOMP \
+              $KCP_ARGS
