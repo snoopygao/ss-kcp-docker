@@ -74,6 +74,7 @@ KCP_ARGS=''
 
 USER nobody
 
+EXPOSE $SERVER_PORT/tcp
 EXPOSE $KCP_LISTEN/udp
 
 CMD /usr/bin/ss-server -s $SERVER_ADDR \
