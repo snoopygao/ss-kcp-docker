@@ -6,12 +6,12 @@
   },
   "inbounds": [{
     "port": 29900,
+    "listen": "0.0.0.0",
     "protocol": "vmess",
     "settings": {
       "clients": [
         {
-          "id": "60ca58e9-003e-4c01-98de-c2223ae49155",
-          "level": 1,
+          "id": "25b46b1d-57b1-476f-9317-d395c292e4fc",
           "alterId": 64
         }
       ]
@@ -19,14 +19,18 @@
   "streamSettings": {
         "network": "mkcp",
         "kcpSettings": {
-          "uplinkCapacity": 20,
-          "downlinkCapacity": 100,
-          "congestion": true,
-          "header": {
-            "type": "none"
-          }
+        "mtu": 1350,
+        "tti": 20,
+        "uplinkCapacity": 5,
+        "downlinkCapacity": 100,
+        "congestion": false,
+        "readBufferSize": 1,
+        "writeBufferSize": 1,
+        "header": {
+          "type": "srtp"
         }
       }
+    }
   }],
   "outbounds": [{
     "protocol": "freedom",
