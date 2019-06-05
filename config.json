@@ -1,6 +1,6 @@
 {
   "log" : {
-    "loglevel": "warning"
+    "loglevel": "debug"
   },
   "inbounds": [{
     "port": 29900,
@@ -22,10 +22,10 @@
         "uplinkCapacity": 20,
         "downlinkCapacity": 20,
         "congestion": false,
-        "readBufferSize": 1,
-        "writeBufferSize": 1,
+        "readBufferSize": 2,
+        "writeBufferSize": 2,
         "header": {
-          "type": "srtp"
+          "type": "wechat-video"
         }
       }
     }
